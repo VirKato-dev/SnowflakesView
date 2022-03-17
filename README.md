@@ -4,9 +4,9 @@
 #
 <!---Пример кода-->
 [![Typing SVG](https://readme-typing-svg.herokuapp.com?color=%2336BCF7&lines=Один+из+вариантов)](https://git.io/typing-svg)
-SnowflakesView sf = new SnowflakesView(this);
+#SnowflakesView sf = new SnowflakesView(this);
 или
-SnowflakesView sf = findViewById(R.id. ...);
+#SnowflakesView sf = findViewById(R.id. ...);
 
 sf.setColor(цвет).setCount(количество);
 // цвет - int
