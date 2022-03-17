@@ -3,7 +3,7 @@
 
 #
 <!---Пример кода-->
-[![Typing SVG](https://readme-typing-svg.herokuapp.com?color=%2336BCF7&lines=SnowflakesView+sf+=+new+SnowflakesView(this);)](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.herokuapp.com?color=%2336BCF7&lines=SnowflakesView+sf+=%0d+new+SnowflakesView(this);)](https://git.io/typing-svg)
 или
 [![Typing SVG](https://readme-typing-svg.herokuapp.com?color=%2336BCF7&lines=SnowflakesView+sf+=+findViewById(R.id.+...);)](https://git.io/typing-svg)
 
