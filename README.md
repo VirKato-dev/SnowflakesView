@@ -3,9 +3,10 @@
 
 #
 <!---Пример кода-->
-[![Typing SVG](https://readme-typing-svg.herokuapp.com?color=%2336BCF7&lines=SnowflakesView+sf+=%0d+new+SnowflakesView(this);)](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.herokuapp.com?color=%2336BCF7&lines=Один+из+вариантов)](https://git.io/typing-svg)
+SnowflakesView sf = new SnowflakesView(this);
 или
-[![Typing SVG](https://readme-typing-svg.herokuapp.com?color=%2336BCF7&lines=SnowflakesView+sf+=+findViewById(R.id.+...);)](https://git.io/typing-svg)
+SnowflakesView sf = findViewById(R.id. ...);
 
 sf.setColor(цвет).setCount(количество);
 // цвет - int
