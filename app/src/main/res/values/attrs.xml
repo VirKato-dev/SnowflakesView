@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<declare-styleable name="Snowflakes">
-    <attr name="colorFlakes" format="color" />
+<declare-styleable name="SnowflakesView">
+    <attr name="colorFlakes" format="reference|color" />
     <attr name="countFlakes" format="integer" />
 </declare-styleable>
 <!-- attributes for other views -->
