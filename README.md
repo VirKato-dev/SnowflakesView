@@ -10,3 +10,5 @@
 sf.setColor(цвет).setCount(количество);
 // цвет - int
 // параметры можно менять в любой момент
+
+[https://github.com/VirKato-dev/SnowflakesView/blob/master/app/src/main/java/my/example/snowflakesview/MainActivity.java](Главный код виджета)
