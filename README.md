@@ -2,9 +2,10 @@
 Анимация снежинок в одном View
 
 #
-SnowflakesView sf = new SnowflakesView(this);
+<!---Пример кода-->
+[![Typing SVG](https://readme-typing-svg.herokuapp.com?color=%2336BCF7&lines=SnowflakesView+sf+=+new+SnowflakesView(this);)](https://git.io/typing-svg)
 или
-SnowflakesView sf = findViewById(R.id. ...);
+[![Typing SVG](https://readme-typing-svg.herokuapp.com?color=%2336BCF7&lines=SnowflakesView+sf+=+findViewById(R.id.+...);)](https://git.io/typing-svg)
 
 sf.setColor(цвет).setCount(количество);
 // цвет - int
