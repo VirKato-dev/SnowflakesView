@@ -23,9 +23,9 @@ public class MainActivity extends AppCompatActivity {
         sfv = findViewById(R.id.snowflakes);
 
         // сначала падают синие снежинки
-        sfv.setColor(Color.BLUE).setCount(100);
+        sfv.setColor(Color.BLUE).setCount(100).setMaxSize(50);
         // меняем цвет следующих снежинок
-        new Handler().postDelayed(() -> sfv.setColor(Color.CYAN), 2000);
+        new Handler().postDelayed(() -> sfv.setColor(Color.CYAN).setMaxSize(20), 2000);
     }
 
 

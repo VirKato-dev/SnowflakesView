@@ -6,8 +6,7 @@
 ### SnowflakesView sf = findViewById(R.id. ...);
 
 ### Настройка
-#### sf.setColor(цвет).setCount(количество);
-#### // цвет - int
+#### sf.setColor(цвет).setCount(количество).setMaxSize(размер);
 #### // параметры можно менять в любой момент
 
 ### Подробно

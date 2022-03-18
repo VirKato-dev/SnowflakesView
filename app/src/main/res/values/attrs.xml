@@ -3,6 +3,7 @@
 <declare-styleable name="SnowflakesView">
     <attr name="colorFlakes" format="color" />
     <attr name="countFlakes" format="integer" />
+    <attr name="sizeFlakes" format="integer" />
 </declare-styleable>
 <!-- attributes for other views -->
 </resources>

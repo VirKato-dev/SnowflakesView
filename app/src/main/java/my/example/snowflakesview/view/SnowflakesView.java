@@ -49,9 +49,14 @@ public class SnowflakesView extends View {
     private int count = 20;
 
     /***
+     * Максимальный размер снежинки
+     */
+    private int maxSize = 19;
+
+    /***
      * Радиус касания
      */
-    private int touchR = 400;
+    private int touchR = 200;
 
     /***
      * Список снежинок
@@ -73,6 +78,9 @@ public class SnowflakesView extends View {
                         break;
                     case "countFlakes":
                         count = attrs.getAttributeIntValue(i, 20);
+                        break;
+                    case  "sizeFlakes":
+                        maxSize = attrs.getAttributeIntValue(i, 20);
                 }
             }
         }
@@ -144,6 +152,18 @@ public class SnowflakesView extends View {
     }
 
     /***
+     * Задать максимальный размер снежинок
+     * @param s размер
+     * @return
+     */
+    public SnowflakesView setMaxSize(int s) {
+        s -= 2;
+        if (s < 1) s = 0;
+        maxSize = s;
+        return this;
+    }
+
+    /***
      * Рисуем все снежинки
      * @param canvas холст
      */
@@ -194,7 +214,7 @@ public class SnowflakesView extends View {
     @NonNull
     private Flake genFlake() {
         Flake f = new Flake();
-        f.size = random.nextInt(19) + 2;
+        f.size = random.nextInt(maxSize) + 2;
         f.speed = random.nextInt(f.size / 3 + 1) + 2;
         f.alfaSpeed = random.nextInt(7) + 1;
         f.x = random.nextInt(getWidth());
@@ -203,7 +223,9 @@ public class SnowflakesView extends View {
         return f;
     }
 
-
+    /***
+     * Место касания
+     */
     private float touchX = -1, touchY = -1;
 
     @Override
