@@ -5,6 +5,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -46,6 +48,11 @@ public class SnowflakesView extends View {
      * Количество снежинок
      */
     private int count = 20;
+
+    /***
+     * Радиус касания
+     */
+    private int touchR = 400;
 
     /***
      * Список снежинок
@@ -101,9 +108,9 @@ public class SnowflakesView extends View {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 //        if (changed) {
-            vWidth = right - left;
-            vHeight = bottom - top;
-            setMeasuredDimension(vWidth, vHeight);
+        vWidth = right - left;
+        vHeight = bottom - top;
+        setMeasuredDimension(vWidth, vHeight);
 //        }
     }
 
@@ -154,12 +161,22 @@ public class SnowflakesView extends View {
 
             // рисовать снежинку
             paint.setColor(f.color);
-            paint.setAlpha((f.alfa < 256)? f.alfa : 255 - f.alfa%255 );
+            paint.setAlpha((f.alfa < 256) ? f.alfa : 255 - f.alfa % 255);
             canvas.drawCircle(f.x, f.y, f.size, paint);
 
             // изменение состояний движения и таяния
             f.y += f.speed;
             f.alfa += f.alfaSpeed;
+
+            // раздвигаем снежинки
+            if (touchX >= 0) {
+                int kx = (int) (f.x - touchX);
+                int ky = (int) (f.y - touchY);
+                if (touchR*touchR > kx*kx + ky*ky) {
+                    if (kx >= 0) f.x++; else f.x--;
+//                    if (ky >= 0) f.y++; else f.y--;
+                }
+            }
 
             if ((f.y > getHeight() + f.size) || f.alfa > 509) {
                 // удалить снежинку при исчезновении или уходе за границу виджета
@@ -179,12 +196,33 @@ public class SnowflakesView extends View {
     private Flake genFlake() {
         Flake f = new Flake();
         f.size = random.nextInt(19) + 2;
-        f.speed = random.nextInt(f.size / 3 + 1) + 1;
+        f.speed = random.nextInt(f.size / 3 + 1) + 2;
         f.alfaSpeed = random.nextInt(7) + 1;
         f.x = random.nextInt(getWidth());
-        f.y = random.nextInt(vHeight/2);
+        f.y = random.nextInt(vHeight / 2);
         f.color = color;
         return f;
     }
 
+
+    private float touchX = -1, touchY = -1;
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        boolean result = false;
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_UP:
+                touchX = -1;
+                touchY = -1;
+                result = true;
+                break;
+            case MotionEvent.ACTION_MOVE:
+            case MotionEvent.ACTION_DOWN:
+                touchX = event.getX();
+                touchY = event.getY();
+                result = true;
+                break;
+        }
+        return result;
+    }
 }
