@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.ProgressBar;
 
 import my.example.snowflakesview.view.SnowflakesView;
@@ -20,8 +21,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         sfv = findViewById(R.id.snowflakes);
-        sfv.setColor(Color.WHITE).setCount(10);
 
+        sfv.setColor(Color.BLUE).setCount(100);
+        new Handler().postDelayed(() -> sfv.setColor(Color.CYAN), 2000);
     }
 
 

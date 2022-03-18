@@ -1,13 +1,13 @@
 package my.example.snowflakesview.view;
 
 import android.content.Context;
-import android.graphics.BlendMode;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,18 +23,32 @@ public class SnowflakesView extends View {
         public int x, y;
         public int size = 1;
         public int speed = 1;
-        public float alfa = 1;
-        public float alfaSpeed = 0;
+        public int alfa = 0;
+        public int alfaSpeed = 0;
+        public int color;
     }
 
 
     private Random random = new Random();
     private Paint paint = new Paint();
+
+    /***
+     * Размер виджета
+     */
+    private int vWidth = 0, vHeight = 0;
+
+    /***
+     * Цвет всех снежинок
+     */
     private int color = Color.MAGENTA;
-    private int count = 20;
 
     /***
      * Количество снежинок
+     */
+    private int count = 20;
+
+    /***
+     * Список снежинок
      */
     private ArrayList<Flake> flakes = new ArrayList<>();
 
@@ -67,6 +81,42 @@ public class SnowflakesView extends View {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        drawFlakes(canvas);
+    }
+
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        vWidth = MeasureSpec.getSize(widthMeasureSpec);
+        vHeight = MeasureSpec.getSize(heightMeasureSpec);
+        setMeasuredDimension(vWidth, vHeight);
+    }
+
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+//        if (changed) {
+            vWidth = right - left;
+            vHeight = bottom - top;
+            setMeasuredDimension(vWidth, vHeight);
+//        }
+    }
+
+    /***
+     * Настроить карандаш
+     */
+    private void init() {
+//        paint.setShadowLayer(5, 0, 0, Color.BLACK);
+        paint.setColor(color);
+        paint.setStrokeWidth(5);
+        paint.setStyle(Paint.Style.FILL);
+    }
+
     /***
      * Задать максимальное количество снежинок
      * @param c количество
@@ -87,65 +137,53 @@ public class SnowflakesView extends View {
         return this;
     }
 
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        drawFlakes(canvas);
-    }
-
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int w = MeasureSpec.getSize(widthMeasureSpec);
-        int h = MeasureSpec.getSize(heightMeasureSpec);
-        setMeasuredDimension(w, h);
-    }
-
-
-    private void init() {
-        paint.setColor(color);
-//        paint.setShadowLayer(5, 0, 0, Color.BLACK);
-        paint.setStrokeWidth(5);
-        paint.setStyle(Paint.Style.FILL);
-    }
-
     /***
      * Рисуем все снежинки
-     * @param canvas полотно
+     * @param canvas холст
      */
     private void drawFlakes(Canvas canvas) {
+        // заполнить список снежинок по заданному количеству
         while (flakes.size() < count) {
             flakes.add(genFlake());
         }
+
         // используем итератор, чтобы легко избавляться от лишних снежинок во время цикла
         Iterator<Flake> it = flakes.iterator();
         while (it.hasNext()) {
             Flake f = it.next();
-            paint.setAlpha((int) (f.alfa * 255f));
+
+            // рисовать снежинку
+            paint.setColor(f.color);
+            paint.setAlpha((f.alfa < 256)? f.alfa : 255 - f.alfa%255 );
             canvas.drawCircle(f.x, f.y, f.size, paint);
 
+            // изменение состояний движения и таяния
             f.y += f.speed;
-            f.alfa -= f.alfaSpeed;
+            f.alfa += f.alfaSpeed;
 
-            if ((f.y > getHeight() + f.size) || f.alfa <= 0) {
-                it.remove(); // ушла, удалили
+            if ((f.y > getHeight() + f.size) || f.alfa > 509) {
+                // удалить снежинку при исчезновении или уходе за границу виджета
+                it.remove();
             }
         }
+
+        // отрисовка холста на виджете
         invalidate();
     }
 
     /***
-     * Создать новую снежинку
-     * @return
+     * Создать снежинку заданного цвета
+     * @return всегда новая
      */
+    @NonNull
     private Flake genFlake() {
         Flake f = new Flake();
         f.size = random.nextInt(19) + 2;
-        f.speed = random.nextInt(f.size / 2) + 2;
-        f.alfaSpeed = random.nextFloat() * 0.005f;
+        f.speed = random.nextInt(f.size / 3 + 1) + 1;
+        f.alfaSpeed = random.nextInt(7) + 1;
         f.x = random.nextInt(getWidth());
-        f.y = random.nextInt(50) - 50;
+        f.y = random.nextInt(vHeight/2);
+        f.color = color;
         return f;
     }
 
