@@ -13,3 +13,4 @@
 ### Подробно
 #### [Главный код виджета](https://github.com/VirKato-dev/SnowflakesView/blob/master/app/src/main/java/my/example/snowflakesview/view/SnowflakesView.java)
 #### Снежинки плавно появляются и плавно исчезают
+#### Добавлена реакция при касании виджета
