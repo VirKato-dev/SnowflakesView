@@ -1,9 +1,15 @@
 package my.example.snowflakesview.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,12 +27,15 @@ public class SnowflakesView extends View {
      * Снежинка
      */
     private static class Flake {
-        public int x, y;
-        public int size = 1;
-        public int speed = 1;
-        public int alfa = 0;
-        public int alfaSpeed = 0;
-        public int color;
+        private int x, y;
+        private int size = 1;
+        private int speed = 1;
+        private int alfa = 0;
+        private int alfaSpeed = 0;
+        private int rotate = 0;
+        private int rotateSpeed = 0;
+        private int color;
+        private Bitmap img;
     }
 
 
@@ -63,6 +72,11 @@ public class SnowflakesView extends View {
      */
     private ArrayList<Flake> flakes = new ArrayList<>();
 
+    /***
+     * Картинки снежинок
+     */
+    private ArrayList<Bitmap> images = new ArrayList<>();
+
 
     public SnowflakesView(Context context) {
         super(context);
@@ -79,7 +93,7 @@ public class SnowflakesView extends View {
                     case "countFlakes":
                         count = attrs.getAttributeIntValue(i, 20);
                         break;
-                    case  "sizeFlakes":
+                    case "sizeFlakes":
                         maxSize = attrs.getAttributeIntValue(i, 20);
                 }
             }
@@ -158,8 +172,18 @@ public class SnowflakesView extends View {
      */
     public SnowflakesView setMaxSize(int s) {
         s -= 2;
-        if (s < 1) s = 0;
+        if (s < 1) s = 1;
         maxSize = s;
+        return this;
+    }
+
+    /***
+     * Добавить картинку снежинки
+     * @return
+     */
+    public SnowflakesView addPicture(int img) {
+        // Храним готовый Bitmap, для ускорения отрисовки
+        images.add(BitmapFactory.decodeResource(getResources(), img));
         return this;
     }
 
@@ -179,25 +203,26 @@ public class SnowflakesView extends View {
             Flake f = it.next();
 
             // рисовать снежинку
-            paint.setColor(f.color);
-            paint.setAlpha((f.alfa < 256) ? f.alfa : 255 - f.alfa % 255);
-            canvas.drawCircle(f.x, f.y, f.size, paint);
+            drawFlake(f, canvas);
 
             // изменение состояний движения и таяния
             f.y += f.speed;
             f.alfa += f.alfaSpeed;
+            f.alfa = (f.alfa <= 255) ? f.alfa : 255 - f.alfa % 255;
+            f.rotate = (f.rotate + f.rotateSpeed) % 360;
 
             // раздвигаем снежинки
             if (touchX >= 0) {
                 int kx = (int) (f.x - touchX);
                 int ky = (int) (f.y - touchY);
-                if (touchR*touchR > kx*kx + ky*ky) {
-                    if (kx >= 0) f.x++; else f.x--;
+                if (touchR * touchR > kx * kx + ky * ky) {
+                    if (kx >= 0) f.x++;
+                    else f.x--;
 //                    if (ky >= 0) f.y++; else f.y--;
                 }
             }
 
-            if ((f.y > getHeight() + f.size) || f.alfa > 509) {
+            if ((f.y > getHeight() + f.size) || f.alfa >= 510) {
                 // удалить снежинку при исчезновении или уходе за границу виджета
                 it.remove();
             }
@@ -205,6 +230,34 @@ public class SnowflakesView extends View {
 
         // отрисовка холста на виджете
         invalidate();
+    }
+
+    /***
+     * Нарисовать снежинку картинкой или кружком
+     * @param f снежинка
+     * @param canvas холст
+     */
+    private void drawFlake(Flake f, Canvas canvas) {
+        paint.setColor(f.color);
+        paint.setAlpha(f.alfa);
+
+        if (f.img == null) {
+            paint.setColorFilter(null);
+            canvas.drawCircle(f.x, f.y, f.size, paint);
+        } else {
+            ColorFilter filter = new PorterDuffColorFilter(f.color, PorterDuff.Mode.SRC_IN);
+            paint.setColorFilter(filter);
+
+            float scale = f.size*2 / (float) Math.max(f.img.getWidth(), f.img.getHeight());
+
+            Matrix matrix = new Matrix();
+            matrix.postScale(scale, scale);
+            matrix.postRotate(f.rotate);
+
+            Bitmap bm = Bitmap.createBitmap(f.img, 0 , 0, f.img.getWidth(), f.img.getHeight(), matrix, false);
+
+            canvas.drawBitmap(bm, f.x - (bm.getWidth()/2f), f.y - (bm.getHeight()/2f), paint);
+        }
     }
 
     /***
@@ -217,9 +270,13 @@ public class SnowflakesView extends View {
         f.size = random.nextInt(maxSize) + 2;
         f.speed = random.nextInt(f.size / 3 + 1) + 2;
         f.alfaSpeed = random.nextInt(7) + 1;
+        f.rotateSpeed = random.nextInt(4) - 2;
         f.x = random.nextInt(getWidth());
         f.y = random.nextInt(vHeight / 2);
         f.color = color;
+        if (images.size() > 0) {
+            f.img = images.get(random.nextInt(images.size()));
+        }
         return f;
     }
 
